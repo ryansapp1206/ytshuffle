@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Playlist Shuffler</title>
+    <title>ytShuffle</title>
     <script src="https://accounts.google.com/gsi/client"></script>
     <style>
         :root { 
@@ -81,6 +81,13 @@
 
         #login-btn, #shuffle-main-btn { background-color: var(--yt-red); color: white; }
         #login-btn:hover, #shuffle-main-btn:hover { background-color: #cc0000; transform: translateY(-1px); }
+
+        .app-desc { 
+            color: var(--yt-subtext); 
+            font-size: 14px; 
+            margin: -15px 0 25px 0; 
+            line-height: 1.5; 
+        }
         
         #next-batch-btn { 
             background-color: transparent; 
@@ -142,6 +149,10 @@
             <p class="subtitle-top">The 100% Unbiased</p>
             <h1>YouTube Playlist Shuffler</h1>
             
+            <p class="app-desc" id="login-desc">
+                Securely connect your account to bypass standard algorithms and generate a truly randomized playback order.
+            </p>
+            
             <p id="status-msg">Initializing API...</p>
             
             <button id="login-btn" class="btn" disabled>
@@ -167,7 +178,7 @@
 
     <footer>
         <span class="disclaimer-text">
-            ytshuffle is an independent project and is not affiliated with, or endorsed by, YouTube or Google.
+            ytShuffle is an independent project and is not affiliated with, or endorsed by, YouTube or Google.
         </span>
         <div class="footer-links">
             <a href="privacy.html">Privacy Policy</a> | 
@@ -200,6 +211,7 @@
                     if (tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
                         document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('login-desc').style.display = 'none';
                         document.getElementById('playlist-container').style.display = 'block';
                         fetchPlaylists();
                     }
