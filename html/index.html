@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Playlist Shuffler</title>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <style>
+        :root { 
+            --yt-red: #FF0000; 
+            --yt-dark-bg: #0f0f0f; 
+            --yt-card-bg: #1e1e1e; 
+            --yt-text: #ffffff; 
+            --yt-subtext: #aaaaaa; 
+            --yt-border: #333333;
+            --yt-accent: #f1f1f1; 
+        }
+        
+        body { 
+            background-color: var(--yt-dark-bg); 
+            color: var(--yt-text); 
+            font-family: 'Roboto', sans-serif; 
+            display: flex; 
+            flex-direction: column; /* Stack app and footer vertically */
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            background-image: radial-gradient(circle at 2px 2px, #222 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* This wrapper ensures the card stays perfectly centered */
+        .main-content {
+            flex: 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .app-container { 
+            background-color: var(--yt-card-bg); 
+            padding: 40px; 
+            border-radius: 24px; 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            border: 1px solid var(--yt-border);
+        }
+
+        .subtitle-top { color: var(--yt-subtext); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 500; }
+        h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
+
+        #status-msg { 
+            background: #121212;
+            padding: 12px;
+            border-radius: 12px;
+            color: var(--yt-accent); 
+            font-size: 14px; 
+            margin-bottom: 20px;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid #222;
+        }
+
+        .btn { 
+            border: none; 
+            padding: 14px 28px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-weight: 700; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        #login-btn, #shuffle-main-btn { background-color: var(--yt-red); color: white; }
+        #login-btn:hover, #shuffle-main-btn:hover { background-color: #cc0000; transform: translateY(-1px); }
+        
+        #next-batch-btn { 
+            background-color: transparent; 
+            color: var(--yt-text); 
+            border: 1px solid var(--yt-text); 
+            display: none; 
+        }
+        #next-batch-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
+
+        .btn:disabled { background-color: #333; color: #666; cursor: not-allowed; border: none; }
+
+        #playlist-container { display: none; }
+        .custom-dropdown { position: relative; width: 100%; text-align: left; margin-bottom: 15px; }
+        #playlist-search { 
+            width: 100%; 
+            padding: 14px 18px; 
+            background-color: #121212; 
+            color: white; 
+            border: 1px solid var(--yt-border); 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            outline: none; 
+            font-size: 15px;
+        }
+
+        #dropdown-list { 
+            display: none; position: absolute; top: 100%; left: 0; right: 0; 
+            background-color: #282828; border: 1px solid var(--yt-border); 
+            border-radius: 12px; max-height: 200px; overflow-y: auto; 
+            list-style: none; padding: 5px 0; z-index: 1000; margin-top: 5px;
+        }
+        #dropdown-list li { padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #333; font-size: 14px; }
+        #dropdown-list li:hover { background-color: #3e3e3e; }
+
+        .g-icon { width: 18px; height: 18px; fill: currentColor; }
+
+        /* Updated Footer: Separated from the card */
+        footer {
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--yt-subtext);
+            max-width: 600px;
+            width: 100%;
+        }
+        footer a {
+            color: var(--yt-subtext);
+            text-decoration: none;
+            margin: 0 8px;
+            transition: color 0.2s;
+        }
+        footer a:hover { color: var(--yt-text); text-decoration: underline; }
+        .disclaimer-text { margin-bottom: 8px; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <div class="app-container">
+            <p class="subtitle-top">The 100% Unbiased</p>
+            <h1>YouTube Playlist Shuffler</h1>
+            
+            <p id="status-msg">Initializing API...</p>
+            
+            <button id="login-btn" class="btn" disabled>
+                <svg class="g-icon" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.747-.067-1.48-.187-2.187H12.48z"/></svg>
+                Sign in with Google
+            </button>
+
+            <div id="playlist-container">
+                <div class="custom-dropdown">
+                    <input type="text" id="playlist-search" placeholder="Search your playlists..." autocomplete="off" />
+                    <ul id="dropdown-list"></ul>
+                </div>
+                
+                <button id="shuffle-main-btn" class="btn">
+                    <svg class="g-icon" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+                    Shuffle & Play
+                </button>
+
+                <button id="next-batch-btn" class="btn">Play Next 50 Songs</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <span class="disclaimer-text">
+            ytshuffle is an independent project and is not affiliated with, or endorsed by, YouTube or Google.
+        </span>
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a> | 
+            <a href="tos.html">Terms of Service</a> | 
+            <a href="https://www.youtube.com/t/terms" target="_blank">YouTube ToS</a>
+        </div>
+    </footer>
+
+    <script>
+        const CLIENT_ID = '188096920008-3tdp73fvcu3f9p5sosgkgs8e3vcjge83.apps.googleusercontent.com';
+        let accessToken, tokenClient;
+        let allPlaylistsData = [], allVideoIds = [], selectedPlaylistId = "";
+        let currentBatchIndex = 0;
+
+        window.onload = () => {
+            const checkGSI = setInterval(() => {
+                if (typeof google !== 'undefined') {
+                    clearInterval(checkGSI);
+                    setupAuth();
+                }
+            }, 100);
+        };
+
+        function setupAuth() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/youtube.readonly',
+                callback: (tokenResponse) => {
+                    if (tokenResponse.access_token) {
+                        accessToken = tokenResponse.access_token;
+                        document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('playlist-container').style.display = 'block';
+                        fetchPlaylists();
+                    }
+                },
+            });
+            document.getElementById('login-btn').disabled = false;
+            document.getElementById('status-msg').innerText = "Waiting for login...";
+        }
+
+        document.getElementById('login-btn').onclick = () => tokenClient.requestAccessToken();
+
+        async function fetchPlaylists(pageToken = '') {
+            document.getElementById('status-msg').innerText = `Syncing Playlists: ${allPlaylistsData.length}`;
+            let url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? `&pageToken=${pageToken}` : ''}`;
+            
+            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+            const data = await response.json();
+            
+            if (data.items) allPlaylistsData.push(...data.items);
+            if (data.nextPageToken) {
+                await fetchPlaylists(data.nextPageToken);
+            } else { 
+                document.getElementById('status-msg').innerText = `Loaded ${allPlaylistsData.length} Playlists.`;
+                renderDropdown(); 
+            }
+        }
+
+        document.getElementById('shuffle-main-btn').onclick = () => {
+            if (!selectedPlaylistId) return alert("Select a playlist.");
+            allVideoIds = [];
+            currentBatchIndex = 0;
+            document.getElementById('next-batch-btn').style.display = 'none';
+            fetchEntirePlaylist(selectedPlaylistId);
+        };
+
+        async function fetchEntirePlaylist(playlistId, pageToken = '') {
+            document.getElementById('status-msg').innerText = `Fetching Songs: ${allVideoIds.length}`;
+            let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageToken ? `&pageToken=${pageToken}` : ''}`;
+            
+            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+            const data = await response.json();
+            
+            data.items.forEach(item => { if(item.snippet.resourceId.videoId) allVideoIds.push(item.snippet.resourceId.videoId); });
+            
+            if (data.nextPageToken) {
+                await fetchEntirePlaylist(playlistId, data.nextPageToken);
+            } else { 
+                shuffleArray(allVideoIds); 
+                document.getElementById('status-msg').innerText = `Shuffled ${allVideoIds.length} songs.`;
+                launchBatch();
+            }
+        }
+
+        function launchBatch() {
+            const batch = allVideoIds.slice(currentBatchIndex, currentBatchIndex + 50);
+            if (batch.length === 0) return alert("No more songs in this playlist.");
+
+            window.open(`https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`, '_blank');
+            
+            currentBatchIndex += 50;
+            const nextBtn = document.getElementById('next-batch-btn');
+            
+            if (currentBatchIndex < allVideoIds.length) {
+                const remaining = allVideoIds.length - currentBatchIndex;
+                nextBtn.innerText = `Play Next 50 (Remaining: ${remaining})`;
+                nextBtn.style.display = 'flex';
+                document.getElementById('shuffle-main-btn').innerText = "Reshuffle & Start Over";
+            } else {
+                nextBtn.style.display = 'none';
+                document.getElementById('status-msg').innerText = "Playlist Finished!";
+            }
+        }
+
+        document.getElementById('next-batch-btn').onclick = launchBatch;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderDropdown(filterText = '') {
+            const list = document.getElementById('dropdown-list');
+            list.innerHTML = '';
+            allPlaylistsData.filter(p => p.snippet.title.toLowerCase().includes(filterText)).forEach(p => {
+                const li = document.createElement('li');
+                li.innerText = `${p.snippet.title} (${p.contentDetails.itemCount})`;
+                li.onclick = () => { 
+                    document.getElementById('playlist-search').value = p.snippet.title; 
+                    selectedPlaylistId = p.id; 
+                    list.style.display = 'none'; 
+                };
+                list.appendChild(li);
+            });
+        }
+
+        const search = document.getElementById('playlist-search');
+        search.onfocus = () => { document.getElementById('dropdown-list').style.display = 'block'; renderDropdown(search.value.toLowerCase()); };
+        search.oninput = (e) => { selectedPlaylistId = ""; renderDropdown(e.target.value.toLowerCase()); };
+    </script>
+</body>
+</html>
