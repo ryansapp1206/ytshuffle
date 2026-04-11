@@ -9,7 +9,7 @@
 * **Continuous Play:** Launches shuffled tracks in optimized batches of 50.
 * **Privacy-First:** Utilizes the least-privilege `youtube.readonly` scope.
 
-## Technical Implementation
+## 🛠️ Technical Implementation
 
 ### The Shuffle Algorithm
 The core of the application is the **Fisher-Yates Shuffle**. Unlike basic "sort-by-random" methods which can have $O(n \log n)$ complexity and potential bias, Fisher-Yates operates in linear time complexity $O(n)$. 
