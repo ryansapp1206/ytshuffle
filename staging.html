@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ytShuffle</title>
+    <title>ytShuffle - Staging</title>
     <script src="https://accounts.google.com/gsi/client"></script>
     <style>
         :root { 
@@ -172,6 +172,12 @@
                 </button>
 
                 <button id="next-batch-btn" class="btn">Play Next 50 Songs</button>
+
+                <div id="recent-shuffles-container" style="display: none; margin-top: 25px; border-top: 1px solid var(--yt-border); padding-top: 20px;">
+                    <p class="subtitle-top">Recently Shuffled</p>
+                    <div id="recent-shuffles-list"></div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -207,7 +213,7 @@
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: 'https://www.googleapis.com/auth/youtube.readonly',
-                prompt: 'consent',
+                // prompt: 'consent' removed for instant login
                 callback: (tokenResponse) => {
                     if (tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
@@ -215,6 +221,7 @@
                         document.getElementById('login-desc').style.display = 'none';
                         document.getElementById('playlist-container').style.display = 'block';
                         fetchPlaylists();
+                        renderRecentShuffles(); 
                     }
                 },
             });
@@ -262,6 +269,10 @@
             } else { 
                 shuffleArray(allVideoIds); 
                 document.getElementById('status-msg').innerText = `Shuffled ${allVideoIds.length} songs.`;
+                
+                const currentPlaylistName = document.getElementById('playlist-search').value || "Custom Playlist";
+                saveRecentShuffle(currentPlaylistName, allVideoIds);
+
                 launchBatch();
             }
         }
@@ -313,6 +324,55 @@
         const search = document.getElementById('playlist-search');
         search.onfocus = () => { document.getElementById('dropdown-list').style.display = 'block'; renderDropdown(search.value.toLowerCase()); };
         search.oninput = (e) => { selectedPlaylistId = ""; renderDropdown(e.target.value.toLowerCase()); };
+
+        // --- LOCALSTORAGE FUNCTIONS ---
+
+        function saveRecentShuffle(playlistName, videoIds) {
+            let recents = JSON.parse(localStorage.getItem('ytShuffle_recents') || '[]');
+            const entry = { name: playlistName, ids: videoIds, date: new Date().toLocaleDateString() };
+            
+            recents.unshift(entry);
+            if (recents.length > 5) recents.pop(); 
+            
+            localStorage.setItem('ytShuffle_recents', JSON.stringify(recents));
+            renderRecentShuffles();
+        }
+
+        function renderRecentShuffles() {
+            const recents = JSON.parse(localStorage.getItem('ytShuffle_recents') || '[]');
+            const container = document.getElementById('recent-shuffles-container');
+            const list = document.getElementById('recent-shuffles-list');
+            
+            if (recents.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            list.innerHTML = ''; 
+            
+            recents.forEach((item) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.backgroundColor = '#282828'; 
+                btn.style.color = 'var(--yt-subtext)';
+                btn.style.fontSize = '14px';
+                btn.style.padding = '10px 20px';
+                
+                btn.innerText = `▶ ${item.name} (${item.ids.length} songs)`;
+                
+                btn.onclick = () => {
+                    allVideoIds = item.ids;
+                    currentBatchIndex = 0;
+                    selectedPlaylistId = "recent_saved"; 
+                    document.getElementById('playlist-search').value = item.name;
+                    document.getElementById('status-msg').innerText = `Loaded saved queue: ${item.name}`;
+                    document.getElementById('next-batch-btn').style.display = 'none';
+                    launchBatch();
+                };
+                list.appendChild(btn);
+            });
+        }
     </script>
 </body>
 </html>
