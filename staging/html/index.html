@@ -11,8 +11,14 @@
 
     <div class="main-content">
         <div class="app-container">
-            <p class="subtitle-top">The 100% Unbiased</p>
-            <h1>YouTube Playlist Shuffler</h1>
+            <button class="info-icon-btn" id="open-modal" aria-label="Why ytShuffle?">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+            </button>
+
+            <p class="subtitle-top">100% Unbiased Playlist Shuffler</p>
+            <h1>ytShuffle</h1>
             
             <p class="app-desc" id="login-desc">
                 Securely connect your account to bypass standard algorithms and generate a truly randomized playback order.
@@ -31,13 +37,25 @@
                     <ul id="dropdown-list"></ul>
                 </div>
                 
-                <button id="shuffle-main-btn" class="btn">
+                <button id="shuffle-main-btn" class="btn btn-primary">
                     <svg class="g-icon" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
                     Shuffle & Play
                 </button>
 
-                <button id="next-batch-btn" class="btn">Play Next 50 Songs</button>
+                <button id="next-batch-btn" class="btn btn-secondary">Play Next 50 Songs</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-content">
+            <h2>Why ytShuffle?</h2>
+            <ul>
+                <li><strong>Youtube's bias:</strong> YouTube's algorithm loops your most-played tracks. We pull the raw video IDs to guarantee a truly randomized queue.</li>
+                <li><strong>Lazy Loading:</strong> YouTube only shuffles the first chunk of a massive playlist. We fetch every single track before shuffling.</li>
+                <li><strong>Complete Privacy:</strong> No need to make your private playlists public or link them to third-party services.</li>
+            </ul>
+            <button class="close-modal" id="close-modal">Got it</button>
         </div>
     </div>
 

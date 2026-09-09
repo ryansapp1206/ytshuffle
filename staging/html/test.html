@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ytShuffle Mockup</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #0f0f0f; color: #ffffff; font-family: 'Roboto', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100dvh; margin: 0; overflow: hidden;
+        }
+        
+        .app-container { 
+            background-color: #1e1e1e; padding: 40px; border-radius: 24px; 
+            width: 100%; max-width: 420px; text-align: center; border: 1px solid #333333;
+            position: relative;
+        }
+        
+        /* Info Icon Trigger */
+        .info-icon-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none; color: #aaaaaa;
+            cursor: pointer; padding: 5px; transition: color 0.2s, transform 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .info-icon-btn:hover { color: #ffffff; transform: scale(1.1); }
+        .info-icon-btn svg { width: 22px; height: 22px; fill: currentColor; z-index: 2; position: relative; }
+
+        /* The Animated Pulse Ring (More Subtle) */
+        .info-icon-btn.unread::after {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(170, 170, 170, 0.2);
+            animation: pulse-ring 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+            z-index: 1;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(170, 170, 170, 0.25); }
+            50% { box-shadow: 0 0 0 8px rgba(170, 170, 170, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(170, 170, 170, 0); }
+        }
+
+        h1 { margin: 0 0 10px 0; }
+        .btn-primary { 
+            background-color: #FF0000; color: white; border: none; padding: 14px 28px; 
+            border-radius: 30px; cursor: pointer; width: 100%; font-weight: 700; font-size: 16px; margin-top: 20px;
+        }
+        
+        /* Modal Overlay Background */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        /* Modal Box */
+        .modal-content {
+            background-color: #1e1e1e; padding: 30px; border-radius: 16px;
+            width: 90%; max-width: 380px; text-align: left; border: 1px solid #333333;
+            transform: translateY(20px); transition: transform 0.2s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .modal-content h2 { margin-top: 0; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .modal-content ul { padding-left: 20px; color: #aaaaaa; font-size: 14px; line-height: 1.6; }
+        .modal-content li { margin-bottom: 12px; }
+        .modal-content strong { color: #ffffff; }
+        
+        .close-modal {
+            background-color: transparent; color: #ffffff; border: 1px solid #ffffff;
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; width: 100%;
+            margin-top: 10px; font-weight: bold;
+        }
+        .close-modal:hover { background-color: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Info Icon Button with the 'unread' class -->
+        <button class="info-icon-btn unread" id="open-modal" aria-label="Why ytShuffle?">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+        </button>
+
+        <h1>ytShuffle</h1>
+        <p style="color: #aaaaaa; font-size: 14px;">Generate a truly randomized playback order.</p>
+        
+        <button class="btn-primary">Sign in with Google</button>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-content">
+            <h2>Why ytShuffle?</h2>
+            <ul>
+                <li><strong>Youtube's bias:</strong> YouTube's algorithm loops your most-played tracks. We pull the raw video IDs to guarantee a truly randomized queue.</li>
+                <li><strong>Lazy Loading:</strong> YouTube only shuffles the first chunk of a massive playlist. We fetch every single track before shuffling.</li>
+                <li><strong>Complete Privacy:</strong> No need to make your private playlists public or link them to third-party services.</li>
+            </ul>
+            <button class="close-modal" id="close-modal">Got it</button>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('info-modal');
+        const openBtn = document.getElementById('open-modal');
+        const closeBtn = document.getElementById('close-modal');
+
+        openBtn.onclick = () => {
+            modal.classList.add('active');
+            openBtn.classList.remove('unread');
+        };
+        
+        closeBtn.onclick = () => modal.classList.remove('active');
+        
+        // Close if clicking outside the box
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        };
+    </script>
+</body>
+</html>

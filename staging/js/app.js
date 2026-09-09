@@ -49,7 +49,6 @@ async function fetchPlaylists(pageToken = '') {
     }
 }
 
-// --- UPDATED: The data is now loaded BEFORE clicking ---
 document.getElementById('shuffle-main-btn').onclick = () => {
     if (!selectedPlaylistId) return alert("Select a playlist first.");
     if (allVideoIds.length === 0) return alert("Playlist is still loading or is empty.");
@@ -60,7 +59,6 @@ document.getElementById('shuffle-main-btn').onclick = () => {
     launchBatch();
 };
 
-// --- UPDATED: Pre-fetches the songs in the background ---
 async function fetchEntirePlaylist(playlistId, pageToken = '') {
     document.getElementById('status-msg').innerText = `Pre-loading Songs... (${allVideoIds.length})`;
     let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageToken ? '&pageToken=' + pageToken : ''}`;
@@ -96,7 +94,16 @@ function launchBatch() {
         const remaining = allVideoIds.length - currentBatchIndex;
         nextBtn.innerText = `Play Next 50 (Remaining: ${remaining})`;
         nextBtn.style.display = 'flex';
-        document.getElementById('shuffle-main-btn').innerText = "Reshuffle & Start Over";
+        
+        const shuffleBtn = document.getElementById('shuffle-main-btn');
+        shuffleBtn.innerText = "Reshuffle & Start Over";
+
+        nextBtn.className = "btn btn-primary";
+        shuffleBtn.className = "btn btn-secondary";
+        
+        if (shuffleBtn.parentNode) {
+            shuffleBtn.parentNode.insertBefore(nextBtn, shuffleBtn);
+        }
     } else {
         nextBtn.style.display = 'none';
         document.getElementById('status-msg').innerText = "Playlist Finished!";
@@ -112,7 +119,6 @@ function shuffleArray(array) {
     }
 }
 
-// --- UPDATED: Clicking a playlist triggers the download immediately ---
 function renderDropdown(filterText = '') {
     const list = document.getElementById('dropdown-list');
     list.innerHTML = '';
@@ -123,11 +129,20 @@ function renderDropdown(filterText = '') {
             document.getElementById('playlist-search').value = p.snippet.title; 
             selectedPlaylistId = p.id; 
             list.style.display = 'none'; 
-            document.getElementById('next-batch-btn').style.display = 'none';
+            
+            const nextBtn = document.getElementById('next-batch-btn');
+            nextBtn.style.display = 'none';
             
             const mainBtn = document.getElementById('shuffle-main-btn');
             mainBtn.disabled = true;
             mainBtn.innerText = "Downloading Playlist...";
+            
+            mainBtn.className = "btn btn-primary";
+            nextBtn.className = "btn btn-secondary";
+            
+            if (nextBtn.parentNode) {
+                nextBtn.parentNode.insertBefore(mainBtn, nextBtn);
+            }
             
             allVideoIds = []; 
             fetchEntirePlaylist(selectedPlaylistId);
@@ -139,3 +154,15 @@ function renderDropdown(filterText = '') {
 const search = document.getElementById('playlist-search');
 search.onfocus = () => { document.getElementById('dropdown-list').style.display = 'block'; renderDropdown(search.value.toLowerCase()); };
 search.oninput = (e) => { selectedPlaylistId = ""; renderDropdown(e.target.value.toLowerCase()); };
+
+const modal = document.getElementById('info-modal');
+const openBtn = document.getElementById('open-modal');
+const closeBtn = document.getElementById('close-modal');
+
+if (openBtn && modal && closeBtn) {
+    openBtn.onclick = () => modal.classList.add('active');
+    closeBtn.onclick = () => modal.classList.remove('active');
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    };
+}
