@@ -20,8 +20,7 @@ function setupAuth() {
         callback: (tokenResponse) => {
             if (tokenResponse.access_token) {
                 accessToken = tokenResponse.access_token;
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('login-desc').style.display = 'none';
+                document.getElementById('login-btn').style.display = 'none';                
                 document.getElementById('playlist-container').style.display = 'block';
                 fetchPlaylists();
             }
@@ -61,13 +60,13 @@ document.getElementById('shuffle-main-btn').onclick = () => {
 
 async function fetchEntirePlaylist(playlistId, pageToken = '') {
     document.getElementById('status-msg').innerText = `Pre-loading Songs... (${allVideoIds.length})`;
-    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageToken ? '&pageToken=' + pageToken : ''}`;
+    let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${playlistId}&fields=items/contentDetails/videoId,nextPageToken${pageToken ? '&pageToken=' + pageToken : ''}`;
     
     const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
     const data = await response.json();
     
     data.items.forEach(item => { 
-        if(item.snippet.resourceId.videoId) allVideoIds.push(item.snippet.resourceId.videoId); 
+        if(item.contentDetails && item.contentDetails.videoId) allVideoIds.push(item.contentDetails.videoId); 
     });
     
     if (data.nextPageToken) {

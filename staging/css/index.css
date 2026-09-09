@@ -48,7 +48,6 @@ body {
 }
 
 .info-icon-btn {
-    position: absolute; top: 20px; right: 20px;
     background: none; border: none; color: var(--yt-subtext);
     cursor: pointer; padding: 5px; transition: color 0.2s, transform 0.2s;
     display: flex; align-items: center; justify-content: center;
@@ -58,7 +57,7 @@ body {
 .info-icon-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
 .subtitle-top { color: var(--yt-subtext); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 500; }
-h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
+h1 { font-size: 32px; margin: 0; font-weight: 700; }
 
 #status-msg { 
     background: #121212;
@@ -96,13 +95,6 @@ h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
 .btn-secondary { background-color: transparent; color: var(--yt-text); border: 1px solid var(--yt-text); }
 .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.1); }
 
-.app-desc { 
-    color: var(--yt-subtext); 
-    font-size: 14px; 
-    margin: -15px 0 25px 0; 
-    line-height: 1.5; 
-}
-
 #next-batch-btn { 
     display: none; 
 }
@@ -121,6 +113,14 @@ h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
     box-sizing: border-box; 
     outline: none; 
     font-size: 15px;
+}
+
+.title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
 }
 
 #dropdown-list { 
@@ -147,6 +147,8 @@ h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
     width: 90%; max-width: 380px; text-align: left; border: 1px solid var(--yt-border);
     transform: translateY(20px); transition: transform 0.2s ease;
 }
+
+
 .modal-overlay.active .modal-content { transform: translateY(0); }
 
 .modal-content h2 { margin-top: 0; font-size: 20px; border-bottom: 1px solid var(--yt-border); padding-bottom: 10px; color: var(--yt-text); }
@@ -162,6 +164,11 @@ h1 { font-size: 32px; margin: 0 0 25px 0; font-weight: 700; }
 .close-modal:hover { background-color: rgba(255,255,255,0.1); }
 
 footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     padding: 30px 20px;
     text-align: center;
     font-size: 11px;
