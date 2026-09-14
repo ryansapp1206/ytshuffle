@@ -57,6 +57,24 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id = "contact-modal">
+        <div class="modal-content">
+            <h2>Feedback & Support</h2>
+            <form id="feedback-form" action="https://formspree.io/f/xkjnyjeg" method="POST">
+                <label style="display: block; margin-bottom: 10px; color: var(--yt-subtext); font-size: 14px;">
+                    Your email:
+                    <input type="email" name="email" required style="width: 100%; padding: 10px; margin-top: 5px; background: #121212; color: white; border: 1px solid var(--yt-border); border-radius: 8px;">
+                </label>
+                <label style="display: block; margin-bottom: 15px; color: var(--yt-subtext); font-size: 14px;">
+                    Message:
+                    <textarea name="message" rows="4" required style="width: 100%; padding: 10px; margin-top: 5px; background: #121212; color: white; border: 1px solid var(--yt-border); border-radius: 8px; resize: vertical;"></textarea>
+                </label>
+                <button type="submit" class="btn btn-primary" id="submit-feedback-btn">Send Feedback</button>
+                <button type="button" class="close-modal" id="close-contact-modal">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <span class="disclaimer-text">
             ytShuffle is an independent project and is not affiliated with, or endorsed by, YouTube or Google.
@@ -64,7 +82,7 @@
         <div class="footer-links">
             <a href="privacy.html">Privacy Policy</a> | 
             <a href="tos.html">Terms of Service</a> | 
-            <a href="https://forms.gle/Bg6TEKXJLUodRjMd7" target="_blank">Feedback & Support</a> | 
+            <a href="#" id="open-contact-modal">Feedback & Support</a> | 
             <a href="https://www.youtube.com/t/terms" target="_blank">YouTube ToS</a>
         </div>
     </footer>

@@ -165,3 +165,54 @@ if (openBtn && modal && closeBtn) {
         if (e.target === modal) modal.classList.remove('active');
     };
 }
+
+const contactModal = document.getElementById('contact-modal');
+const openContactBtn = document.getElementById('open-contact-modal');
+const closeContactBtn = document.getElementById('close-contact-modal');
+const feedbackForm = document.getElementById('feedback-form');
+const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+
+if (openContactBtn && contactModal && closeContactBtn) {
+    openContactBtn.onclick = (e) => {
+        e.preventDefault();
+        contactModal.classList.add('active');
+    };
+    
+    closeContactBtn.onclick = () => contactModal.classList.remove('active');
+    
+    contactModal.onclick = (e) => {
+        if (e.target === contactModal) contactModal.classList.remove('active');
+    };
+}
+
+if (feedbackForm) {
+    feedbackForm.onsubmit = async (e) => {
+        e.preventDefault(); 
+        submitFeedbackBtn.innerText = "Sending...";
+        submitFeedbackBtn.disabled = true;
+
+        try {
+            const response = await fetch(feedbackForm.action, {
+                method: 'POST',
+                body: new FormData(feedbackForm),
+                headers: { 'Accept': 'application/json' }
+            });
+            
+            if (response.ok) {
+                feedbackForm.reset();
+                submitFeedbackBtn.innerText = "Feedback Sent!";
+                setTimeout(() => {
+                    contactModal.classList.remove('active');
+                    submitFeedbackBtn.innerText = "Send Feedback";
+                    submitFeedbackBtn.disabled = false;
+                }, 2000);
+            } else {
+                submitFeedbackBtn.innerText = "Error. Try Again.";
+                submitFeedbackBtn.disabled = false;
+            }
+        } catch (error) {
+            submitFeedbackBtn.innerText = "Error. Try Again.";
+            submitFeedbackBtn.disabled = false;
+        }
+    };
+}
