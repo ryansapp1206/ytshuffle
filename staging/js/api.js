@@ -7,6 +7,8 @@ export async function fetchPlaylists(pageToken = '') {
     
     const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
     const data = await response.json();
+
+    
     
     if (data.items) appState.allPlaylistsData.push(...data.items);
     if (data.nextPageToken) {
@@ -23,6 +25,8 @@ export async function fetchEntirePlaylist(playlistId, pageToken = '') {
     
     const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
     const data = await response.json();
+
+    if (playlistId !== appState.selectedPlaylistId) return;
     
     data.items.forEach(item => { 
         if(item.contentDetails && item.contentDetails.videoId) appState.allVideoIds.push(item.contentDetails.videoId); 
