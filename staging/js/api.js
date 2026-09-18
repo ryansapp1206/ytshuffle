@@ -1,3 +1,6 @@
+import { appState } from './state.js';
+import { renderDropdown } from './ui.js';
+
 export async function fetchPlaylists(pageToken = '') {
     if (!pageToken) appState.allPlaylistsData = []; 
     document.getElementById('status-msg').innerText = `Syncing Playlists: ${appState.allPlaylistsData.length}`;
@@ -55,6 +58,7 @@ export async function fetchEntirePlaylist(playlistId, pageToken = '') {
     }
 }
 
+// Add this helper function at the bottom of api.js
 function handleAuthError() {
     appState.accessToken = null;
     document.getElementById('status-msg').innerText = "Session expired. Please sign in again.";
