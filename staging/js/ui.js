@@ -8,8 +8,7 @@ export function renderDropdown(filterText = '') {
         const li = document.createElement('li');
         li.innerText = `${p.snippet.title} (${p.contentDetails.itemCount})`;
         li.onclick = () => { 
-            if(appState.isFetching) return;
-            appState.isFetching = true;
+            if (appState.selectedPlaylistId === p.id) return;
 
             document.getElementById('playlist-search').value = p.snippet.title; 
             appState.selectedPlaylistId = p.id; 
@@ -39,8 +38,15 @@ export function renderDropdown(filterText = '') {
 export function setupUIEventListeners() {
     const search = document.getElementById('playlist-search');
     if (search) {
-        search.onfocus = () => { document.getElementById('dropdown-list').style.display = 'block'; renderDropdown(search.value.toLowerCase()); };
-        search.oninput = (e) => { appState.selectedPlaylistId = ""; renderDropdown(e.target.value.toLowerCase()); };
+        search.onfocus = () => { 
+            document.getElementById('dropdown-list').style.display = 'block'; 
+            renderDropdown(search.value.toLowerCase()); 
+        };
+
+        search.oninput = (e) => { 
+            appState.selectedPlaylistId = ""; 
+            renderDropdown(e.target.value.toLowerCase()); 
+        };
     }
 
     const modal = document.getElementById('info-modal');
