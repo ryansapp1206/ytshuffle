@@ -18,7 +18,6 @@ export function setupAuth() {
         },
     });
 
-    // Check storage on page load
     const savedToken = localStorage.getItem('yt_access_token');
     const savedExpiry = localStorage.getItem('yt_token_expires');
 
@@ -31,10 +30,26 @@ export function setupAuth() {
     }
 }
 
+export function handleLogoutClick() {
+    clearStoredAuth();
+    
+    document.getElementById('playlist-container').style.display = 'none';
+    document.getElementById('logout-btn').style.display = 'none';
+    
+    const loginBtn = document.getElementById('login-btn');
+    loginBtn.style.display = 'flex';
+    loginBtn.disabled = false;
+    
+    document.getElementById('status-msg').innerText = "Signed out successfully.";
+}
+
 function applyLogin(token) {
     appState.accessToken = token;
     document.getElementById('login-btn').style.display = 'none';
     document.getElementById('playlist-container').style.display = 'block';
+
+    document.getElementById('logout-btn').style.display = 'block';
+
     fetchPlaylists();
 }
 
