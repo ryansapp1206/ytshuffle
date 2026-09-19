@@ -93,6 +93,8 @@ export async function fetchEntirePlaylist(playlistId, pageToken = '') {
 
 function handleAuthError() {
     appState.accessToken = null;
+    localStorage.removeItem('yt_access_token');
+    localStorage.removeItem('yt_token_expires');
     document.getElementById('status-msg').innerText = "Session expired. Please sign in again.";
     document.getElementById('playlist-container').style.display = 'none';
     
