@@ -102,4 +102,23 @@ export function setupUIEventListeners() {
             }
         };
     }
+
+    document.addEventListener('click', (event) => {
+        const dropdownContainer = document.querySelector('.custom-dropdown');
+        const dropdownList = document.getElementById('dropdown-list');
+
+        if (dropdownContainer && dropdownList && !dropdownContainer.contains(event.target)) {
+            dropdownList.style.display = 'none';
+        }
+    });
+
+    const searchInput = document.getElementById('playlist-search');
+    if (searchInput) {
+        searchInput.addEventListener('click', () => {
+            const dropdownList = document.getElementById('dropdown-list');
+            if (dropdownList.innerHTML.trim() !== '') {
+                dropdownList.style.display = 'block';
+            }
+        });
+    }
 }
