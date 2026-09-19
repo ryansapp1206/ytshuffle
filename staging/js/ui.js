@@ -8,6 +8,9 @@ export function renderDropdown(filterText = '') {
         const li = document.createElement('li');
         li.innerText = `${p.snippet.title} (${p.contentDetails.itemCount})`;
         li.onclick = () => { 
+            if(appState.isFetching) return;
+            appState.isFetching = true;
+
             document.getElementById('playlist-search').value = p.snippet.title; 
             appState.selectedPlaylistId = p.id; 
             list.style.display = 'none'; 
