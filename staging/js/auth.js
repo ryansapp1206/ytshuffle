@@ -22,3 +22,20 @@ export function setupAuth() {
 export function handleLoginClick() {
     appState.tokenClient.requestAccessToken();
 }
+
+function applyLogin(token) {
+    appState.accessToken = token;
+    document.getElementById('login-btn').style.display = 'none';
+    document.getElementById('playlist-container').style.display = 'block';
+    fetchPlaylists();
+}
+
+export function clearStoredAuth() {
+    localStorage.removeItem('yt_access_token');
+    localStorage.removeItem('yt_token_expires');
+    appState.accessToken = null;
+}
+
+export function handleLoginClick() {
+    appState.tokenClient.requestAccessToken();
+}
