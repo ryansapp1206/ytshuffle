@@ -19,9 +19,9 @@ body {
     display: flex; 
     flex-direction: column;
     align-items: center; 
-    height: 100dvh; 
+    min-height: 100dvh; 
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden; 
     background-image: radial-gradient(circle at 2px 2px, #222 1px, transparent 0);
     background-size: 40px 40px;
 }
@@ -87,12 +87,15 @@ h1 { font-size: 32px; margin: 0; font-weight: 700; }
 }
 
 #login-btn { background-color: var(--yt-red); color: white; }
+
 #login-btn:hover { background-color: #cc0000; transform: translateY(-1px); }
 
 .btn-primary { background-color: var(--yt-red); color: white; border: none; }
+
 .btn-primary:hover { background-color: #cc0000; transform: translateY(-1px); }
 
 .btn-secondary { background-color: transparent; color: var(--yt-text); border: 1px solid var(--yt-text); }
+
 .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.1); }
 
 #next-batch-btn { 
@@ -102,7 +105,9 @@ h1 { font-size: 32px; margin: 0; font-weight: 700; }
 .btn:disabled { background-color: #333; color: #666; cursor: not-allowed; border: none; }
 
 #playlist-container { display: none; }
+
 .custom-dropdown { position: relative; width: 100%; text-align: left; margin-bottom: 15px; }
+
 #playlist-search { 
     width: 100%; 
     padding: 14px 18px; 
@@ -164,11 +169,7 @@ h1 { font-size: 32px; margin: 0; font-weight: 700; }
 .close-modal:hover { background-color: rgba(255,255,255,0.1); }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
+    margin-top: auto;
     padding: 30px 20px;
     text-align: center;
     font-size: 11px;
@@ -176,11 +177,23 @@ footer {
     max-width: 600px;
     width: 100%;
 }
+
 footer a {
     color: var(--yt-subtext);
     text-decoration: none;
     margin: 0 8px;
     transition: color 0.2s;
 }
+
 footer a:hover { color: var(--yt-text); text-decoration: underline; }
+
 .disclaimer-text { margin-bottom: 8px; display: block; }
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: 30px 20px;
+    }
+    footer {
+        padding: 20px 10px;
+    }
+}
