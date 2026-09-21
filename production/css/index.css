@@ -27,24 +27,25 @@ body {
 }
 
 .main-content {
-    flex: 1; 
+    flex: 1 0 auto; 
     display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    padding: 20px;
+    padding: 40px 20px;
 }
 
-.app-container { 
-    background-color: var(--yt-card-bg); 
-    padding: 40px; 
-    border-radius: 24px; 
-    width: 100%; 
-    max-width: 420px; 
-    text-align: center; 
+.app-container {
+    background-color: var(--yt-card-bg);
+    padding: 40px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     border: 1px solid var(--yt-border);
     position: relative;
+    margin: auto; 
+    height: fit-content;
+    min-height: 0;
 }
 
 .info-icon-btn {
