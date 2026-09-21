@@ -9,7 +9,7 @@ export function shuffleArray(array) {
 
 export function launchBatch() {
     const batch = appState.allVideoIds.slice(appState.currentBatchIndex, appState.currentBatchIndex + 50);
-    if (batch.length === 0) return alert("No more songs in this playlist.");
+    if (batch.length === 0) return alert("No more videos in this playlist.");
 
     window.open(`https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`, '_blank');
     
@@ -42,6 +42,6 @@ export function handleShuffleMainClick() {
     
     shuffleArray(appState.allVideoIds); 
     appState.currentBatchIndex = 0; 
-    document.getElementById('status-msg').innerText = `Shuffled ${appState.allVideoIds.length} songs.`;
+    document.getElementById('status-msg').innerText = `Shuffled ${appState.allVideoIds.length} videos.`;
     launchBatch();
 }

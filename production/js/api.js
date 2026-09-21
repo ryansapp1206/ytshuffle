@@ -35,7 +35,7 @@ export async function fetchPlaylists(pageToken = '') {
 }
 
 export async function fetchEntirePlaylist(playlistId, pageToken = '') {
-    document.getElementById('status-msg').innerText = `Pre-loading Songs... (${appState.allVideoIds.length})`;
+    document.getElementById('status-msg').innerText = `Pre-loading Videos... (${appState.allVideoIds.length})`;
     let url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${playlistId}&fields=items/contentDetails/videoId,nextPageToken${pageToken ? '&pageToken=' + pageToken : ''}`;
     
     try {
@@ -72,7 +72,7 @@ export async function fetchEntirePlaylist(playlistId, pageToken = '') {
         if (data.nextPageToken) {
             await fetchEntirePlaylist(playlistId, data.nextPageToken);
         } else { 
-            document.getElementById('status-msg').innerText = `Playlist Ready! (${appState.allVideoIds.length} songs loaded)`;
+            document.getElementById('status-msg').innerText = `Playlist Ready! (${appState.allVideoIds.length} videos loaded)`;
             
             const mainBtn = document.getElementById('shuffle-main-btn');
             mainBtn.disabled = false;
