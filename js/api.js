@@ -1,6 +1,7 @@
 import { appState } from './state.js';
 import { renderDropdown } from './ui.js';
 import { getCachedVideos, setCachedVideos } from './cache.js';
+import { clearStoredAuth } from './auth.js';
 
 let activeAbortController = null;
 
@@ -139,9 +140,7 @@ function setEmptyUI() {
 }
 
 function handleAuthError() {
-    appState.accessToken = null;
-    localStorage.removeItem('yt_access_token');
-    localStorage.removeItem('yt_token_expires');
+    clearStoredAuth();
     document.getElementById('status-msg').innerText = "Session expired. Please sign in again.";
     document.getElementById('playlist-container').style.display = 'none';
     
