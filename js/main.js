@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxAttempts = 100; // 100 attempts at 100ms = 10 seconds
 
     const checkGSI = setInterval(() => {
-        if (typeof google !== 'undefined') {
+        if (typeof google !== 'undefined' && google.accounts?.oauth2) {
             clearInterval(checkGSI);
             setupAuth();
         } else {
