@@ -29,6 +29,8 @@ export async function getCachedVideos(playlistId) {
 
             request.onsuccess = () => {
                 const entry = request.result;
+                db.close();
+
                 if (!entry) return resolve(null);
 
                 if (Date.now() - entry.timestamp < CACHE_TTL_MS) {
@@ -39,7 +41,10 @@ export async function getCachedVideos(playlistId) {
                 }
             };
 
-            request.onerror = () => resolve(null);
+            request.onerror = () => {
+                db.close();
+                resolve(null);
+            };
         });
     } catch {
         return null;
@@ -59,8 +64,16 @@ export async function setCachedVideos(playlistId, videos) {
             };
 
             const request = store.put(record);
-            request.onsuccess = () => resolve(true);
-            request.onerror = () => resolve(false);
+            
+            request.onsuccess = () => {
+                db.close();
+                resolve(true);
+            };
+            
+            request.onerror = () => {
+                db.close();
+                resolve(false);
+            };
         });
     } catch (error) {
         console.error("IndexedDB Cache Write Error:", error);
@@ -75,8 +88,16 @@ export async function deleteCachedVideos(playlistId) {
             const transaction = db.transaction([STORE_NAME], 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
             const request = store.delete(playlistId);
-            request.onsuccess = () => resolve(true);
-            request.onerror = () => resolve(false);
+            
+            request.onsuccess = () => {
+                db.close();
+                resolve(true);
+            };
+            
+            request.onerror = () => {
+                db.close(); 
+                resolve(false);
+            };
         });
     } catch {
         return false;
