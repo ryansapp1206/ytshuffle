@@ -5,33 +5,44 @@ import { clearStoredAuth } from './auth.js';
 
 let activeAbortController = null;
 
-export async function fetchPlaylists(pageToken = '') {
-    if (!pageToken) appState.allPlaylistsData = []; 
-    document.getElementById('status-msg').innerText = `Syncing Playlists: ${appState.allPlaylistsData.length}`;
+export async function fetchPlaylists() {
+    appState.allPlaylistsData = []; 
+    let pageToken = '';
     
-    const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? '&pageToken=' + pageToken : ''}`;
-    
+    document.getElementById('status-msg').innerText = "Syncing Playlists...";
+
     try {
-        const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
-        
-        if (response.status === 401) throw new Error("Token Expired");
-        if (!response.ok) throw new Error("API Error");
-        
-        const data = await response.json();
-        
-        if (data.items) appState.allPlaylistsData.push(...data.items);
-        if (data.nextPageToken) {
-            await fetchPlaylists(data.nextPageToken);
-        } else { 
-            document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
-            renderDropdown(); 
-        }
+        do {
+            const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? '&pageToken=' + pageToken : ''}`;
+            
+            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
+            
+            if (response.status === 401) throw new Error("Token Expired");
+            if (!response.ok) throw new Error("API Error");
+            
+            const data = await response.json();
+            
+            if (data.items) appState.allPlaylistsData.push(...data.items);
+            
+            document.getElementById('status-msg').innerText = `Syncing Playlists: ${appState.allPlaylistsData.length}`;
+            
+            pageToken = data.nextPageToken || '';
+            
+        } while (pageToken);
+
+        document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
+        renderDropdown(); 
+
     } catch (error) {
         if (error.message === "Token Expired") {
             handleAuthError();
         } else {
             console.error("fetchPlaylists error:", error);
-            document.getElementById('status-msg').innerText = "Network error connecting to YouTube. Please try again.";
+            document.getElementById('status-msg').innerText = "Network error. Partial playlists loaded.";
+            
+            if (appState.allPlaylistsData.length > 0) {
+                renderDropdown();
+            }
             
             const mainBtn = document.getElementById('shuffle-main-btn');
             if (mainBtn) mainBtn.disabled = false;
