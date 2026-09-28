@@ -1,38 +1,92 @@
 import { appState } from './state.js';
 import { fetchEntirePlaylist } from './api.js';
 
+function getFavorites() {
+    try {
+        const stored = localStorage.getItem('yt_favorites');
+        const parsed = stored ? JSON.parse(stored) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        return [];
+    }
+}
+
 export function renderDropdown(filterText = '') {
     const list = document.getElementById('dropdown-list');
     list.innerHTML = '';
-    appState.allPlaylistsData.filter(p => p.snippet.title.toLowerCase().includes(filterText)).forEach(p => {
-        const li = document.createElement('li');
-        li.innerText = `${p.snippet.title} (${p.contentDetails.itemCount})`;
-        li.onclick = () => { 
-            if (appState.selectedPlaylistId === p.id) return;
+    
+    let favorites = getFavorites();
+    appState.favoritePlaylistIds = favorites;
 
-            document.getElementById('playlist-search').value = p.snippet.title; 
-            appState.selectedPlaylistId = p.id; 
-            list.style.display = 'none'; 
+    appState.allPlaylistsData
+        .filter(p => p.snippet.title.toLowerCase().includes(filterText))
+        .sort((a, b) => {
+            const aFav = favorites.includes(a.id);
+            const bFav = favorites.includes(b.id);
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+            return 0;
+        })
+        .forEach(p => {
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+
+            const textSpan = document.createElement('span');
+            textSpan.innerText = `${p.snippet.title} (${p.contentDetails.itemCount})`;
             
-            const nextBtn = document.getElementById('next-batch-btn');
-            nextBtn.style.display = 'none';
-            
-            const mainBtn = document.getElementById('shuffle-main-btn');
-            mainBtn.disabled = true;
-            mainBtn.innerText = "Downloading Playlist...";
-            
-            mainBtn.className = "btn btn-primary";
-            nextBtn.className = "btn btn-secondary";
-            
-            if (nextBtn.parentNode) {
-                nextBtn.parentNode.insertBefore(mainBtn, nextBtn);
-            }
-            
-            appState.allVideoIds = []; 
-            fetchEntirePlaylist(appState.selectedPlaylistId);
-        };
-        list.appendChild(li);
-    });
+            const starIcon = document.createElement('span');
+            const isFavorite = favorites.includes(p.id);
+            starIcon.innerHTML = isFavorite ? '★' : '☆';
+            starIcon.style.cursor = 'pointer';
+            starIcon.style.color = isFavorite ? '#FFD700' : '#888';
+            starIcon.style.fontSize = '1.2rem';
+            starIcon.style.paddingLeft = '10px';
+
+            starIcon.onclick = (e) => {
+                e.stopPropagation();
+                
+                let currentFavs = getFavorites();
+                if (currentFavs.includes(p.id)) {
+                    currentFavs = currentFavs.filter(id => id !== p.id);
+                } else {
+                    currentFavs.push(p.id);
+                }
+                
+                localStorage.setItem('yt_favorites', JSON.stringify(currentFavs));
+                renderDropdown(filterText);
+            };
+
+            li.onclick = () => { 
+                if (appState.selectedPlaylistId === p.id) return;
+
+                document.getElementById('playlist-search').value = p.snippet.title; 
+                appState.selectedPlaylistId = p.id; 
+                list.style.display = 'none'; 
+                
+                const nextBtn = document.getElementById('next-batch-btn');
+                if (nextBtn) nextBtn.style.display = 'none';
+                
+                const mainBtn = document.getElementById('shuffle-main-btn');
+                if (mainBtn) {
+                    mainBtn.disabled = true;
+                    mainBtn.innerText = "Downloading Playlist...";
+                    mainBtn.className = "btn btn-primary";
+                    
+                    if (nextBtn && nextBtn.parentNode) {
+                        nextBtn.parentNode.insertBefore(mainBtn, nextBtn);
+                    }
+                }
+                
+                appState.allVideoIds = []; 
+                fetchEntirePlaylist(appState.selectedPlaylistId);
+            };
+
+            li.appendChild(textSpan);
+            li.appendChild(starIcon);
+            list.appendChild(li);
+        });
 }
 
 export function setupUIEventListeners() {
