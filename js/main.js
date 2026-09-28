@@ -2,7 +2,7 @@ import { setupAuth, handleLoginClick, handleLogoutClick } from './auth.js';
 import { handleShuffleMainClick, launchBatch } from './playlist.js';
 import { setupUIEventListeners } from './ui.js';
 
-window.onload = () => {
+document.addEventListener('DOMContentLoaded', () => {
     setupUIEventListeners();
 
     const loginBtn = document.getElementById('login-btn');
@@ -17,6 +17,9 @@ window.onload = () => {
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.onclick = handleLogoutClick;
 
+    let attempts = 0;
+    const maxAttempts = 100; // 100 attempts at 100ms = 10 seconds
+
     const checkGSI = setInterval(() => {
         if (typeof google !== 'undefined') {
             clearInterval(checkGSI);
@@ -28,9 +31,9 @@ window.onload = () => {
                 const statusMsg = document.getElementById('status-msg');
                 if (statusMsg) {
                     statusMsg.innerText = "Login service blocked. Please disable your adblocker or tracker protection to sign in.";
-                    statusMsg.style.color = "var(--yt-red)"; // Visually flags the error state
+                    statusMsg.style.color = "var(--yt-red)"; 
                 }
             }
         }
     }, 100);
-};
+});
