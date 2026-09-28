@@ -21,6 +21,16 @@ window.onload = () => {
         if (typeof google !== 'undefined') {
             clearInterval(checkGSI);
             setupAuth();
+        } else {
+            attempts++;
+            if (attempts >= maxAttempts) {
+                clearInterval(checkGSI);
+                const statusMsg = document.getElementById('status-msg');
+                if (statusMsg) {
+                    statusMsg.innerText = "Login service blocked. Please disable your adblocker or tracker protection to sign in.";
+                    statusMsg.style.color = "var(--yt-red)"; // Visually flags the error state
+                }
+            }
         }
     }, 100);
 };
