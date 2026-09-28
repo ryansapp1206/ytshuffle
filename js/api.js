@@ -2,6 +2,7 @@ import { appState } from './state.js';
 import { renderDropdown } from './ui.js';
 import { getCachedVideos, setCachedVideos } from './cache.js';
 import { clearStoredAuth } from './auth.js';
+import { cleanGhostFavorites } from './ui.js';
 
 let activeAbortController = null;
 
