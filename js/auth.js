@@ -33,6 +33,17 @@ export function setupAuth() {
 export function handleLogoutClick() {
     clearStoredAuth();
     
+    appState.allPlaylistsData = [];
+    appState.allVideoIds = [];
+    appState.selectedPlaylistId = "";
+    appState.currentBatchIndex = 0;
+    
+    const searchInput = document.getElementById('playlist-search');
+    if (searchInput) searchInput.value = "";
+    
+    const dropdownList = document.getElementById('dropdown-list');
+    if (dropdownList) dropdownList.innerHTML = "";
+    
     document.getElementById('playlist-container').style.display = 'none';
     document.getElementById('logout-btn').style.display = 'none';
     
