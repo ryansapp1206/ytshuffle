@@ -31,6 +31,7 @@ export async function fetchPlaylists() {
         } while (pageToken);
 
         document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
+        cleanGhostFavorites();
         renderDropdown(); 
 
     } catch (error) {

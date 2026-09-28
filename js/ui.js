@@ -202,3 +202,24 @@ export function setupUIEventListeners() {
         });
     }
 }
+
+export function cleanGhostFavorites() {
+    try {
+        const stored = localStorage.getItem('yt_favorites');
+        if (!stored) return;
+        
+        let favorites = JSON.parse(stored);
+        if (!Array.isArray(favorites)) return;
+
+        const validPlaylistIds = new Set(appState.allPlaylistsData.map(p => p.id));
+        
+        const cleanedFavorites = favorites.filter(id => validPlaylistIds.has(id));
+        
+        if (favorites.length !== cleanedFavorites.length) {
+            localStorage.setItem('yt_favorites', JSON.stringify(cleanedFavorites));
+            console.log(`Cleaned ${favorites.length - cleanedFavorites.length} ghost IDs.`);
+        }
+    } catch (e) {
+        console.error("Failed to clean favorites:", e);
+    }
+}
