@@ -6,6 +6,5 @@ export const appState = {
     allPlaylistsData: [],
     allVideoIds: [],
     selectedPlaylistId: "",
-    currentBatchIndex: 0,
-    isFetching: false
+    currentBatchIndex: 0
 };
