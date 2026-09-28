@@ -1,7 +1,7 @@
 const DB_NAME = 'yt_shuffle_db';
 const DB_VERSION = 1;
 const STORE_NAME = 'playlist_cache';
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 
 function openDB() {
     return new Promise((resolve, reject) => {
