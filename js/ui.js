@@ -54,7 +54,12 @@ export function renderDropdown(filterText = '') {
                     currentFavs.push(p.id);
                 }
                 
-                localStorage.setItem('yt_favorites', JSON.stringify(currentFavs));
+                try {
+                    localStorage.setItem('yt_favorites', JSON.stringify(currentFavs));
+                } catch (error) {
+                    console.warn("Storage access blocked. Unable to save favorite.", error);
+                }
+                
                 renderDropdown(filterText);
             };
 
