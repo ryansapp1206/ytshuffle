@@ -166,3 +166,9 @@ function handleAuthError() {
         loginBtn.disabled = false;
     }
 }
+
+export function abortActiveFetches() {
+    if (activeAbortController) {
+        activeAbortController.abort();
+    }
+}

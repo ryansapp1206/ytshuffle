@@ -1,5 +1,5 @@
 import { appState, CLIENT_ID } from './state.js';
-import { fetchPlaylists } from './api.js';
+import { fetchPlaylists, abortActiveFetches } from './api.js';
 
 export function setupAuth() {
     appState.tokenClient = google.accounts.oauth2.initTokenClient({
