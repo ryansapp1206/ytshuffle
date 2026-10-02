@@ -1,5 +1,5 @@
 import { appState } from './state.js';
-import { fetchEntirePlaylist } from './api.js';
+import { fetchEntirePlaylist, abortActiveFetches } from './api.js';
 
 function getStorageKey() {
     return 'yt_shuffle_favorites';
@@ -129,6 +129,8 @@ export function setupUIEventListeners() {
                     fetchEntirePlaylist(appState.selectedPlaylistId);
                 }
             } else {
+                abortActiveFetches();
+                
                 appState.selectedPlaylistId = ""; 
                 
                 const mainBtn = document.getElementById('shuffle-main-btn');
