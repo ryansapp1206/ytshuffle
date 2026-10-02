@@ -14,7 +14,7 @@ export async function fetchPlaylists() {
 
     try {
         do {
-            const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? '&pageToken=' + pageToken : ''}`;
+            const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
             
             const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
             
