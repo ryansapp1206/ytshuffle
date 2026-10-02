@@ -82,10 +82,6 @@ export function renderDropdown(filterText = '') {
                     mainBtn.disabled = true;
                     mainBtn.innerText = "Downloading Playlist...";
                     mainBtn.className = "btn btn-primary";
-                    
-                    if (nextBtn && nextBtn.parentNode) {
-                        nextBtn.parentNode.insertBefore(mainBtn, nextBtn);
-                    }
                 }
                 
                 appState.allVideoIds = []; 

@@ -34,10 +34,6 @@ export function launchBatch() {
 
         nextBtn.className = "btn btn-primary";
         shuffleBtn.className = "btn btn-secondary";
-        
-        if (shuffleBtn.parentNode) {
-            shuffleBtn.parentNode.insertBefore(nextBtn, shuffleBtn);
-        }
     } else {
         nextBtn.style.display = 'none';
         document.getElementById('status-msg').innerText = "Playlist Finished!";
