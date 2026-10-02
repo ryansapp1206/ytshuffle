@@ -31,6 +31,7 @@ export function setupAuth() {
 }
 
 export function handleLogoutClick() {
+    abortActiveFetches();
     clearStoredAuth();
     
     appState.allPlaylistsData = [];
