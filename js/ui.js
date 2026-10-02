@@ -110,7 +110,48 @@ export function setupUIEventListeners() {
         };
 
         search.oninput = (e) => { 
-            renderDropdown(e.target.value.toLowerCase());
+            const typedText = e.target.value.toLowerCase();
+            const exactMatch = appState.allPlaylistsData.find(p => p.snippet.title.toLowerCase() === typedText);
+
+            if (exactMatch) {
+                if (appState.selectedPlaylistId !== exactMatch.id) {
+                    appState.selectedPlaylistId = exactMatch.id; 
+                    document.getElementById('dropdown-list').style.display = 'none'; 
+                    
+                    const nextBtn = document.getElementById('next-batch-btn');
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    
+                    const mainBtn = document.getElementById('shuffle-main-btn');
+                    if (mainBtn) {
+                        mainBtn.disabled = true;
+                        mainBtn.innerText = "Downloading Playlist...";
+                        mainBtn.className = "btn btn-primary";
+                    }
+                    
+                    appState.allVideoIds = []; 
+                    fetchEntirePlaylist(appState.selectedPlaylistId);
+                }
+            } else {
+                appState.selectedPlaylistId = ""; 
+                
+                const mainBtn = document.getElementById('shuffle-main-btn');
+                if (mainBtn) {
+                    mainBtn.innerHTML = `<svg class="g-icon" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg> Shuffle & Play`;
+                    mainBtn.disabled = true;
+                }
+                
+                const statusMsg = document.getElementById('status-msg');
+                if (statusMsg) {
+                    statusMsg.innerText = "Search for a playlist to begin.";
+                }
+                
+                const nextBtn = document.getElementById('next-batch-btn');
+                if (nextBtn) {
+                    nextBtn.style.display = 'none';
+                }
+            }
+
+            renderDropdown(typedText); 
         };
     }
 
