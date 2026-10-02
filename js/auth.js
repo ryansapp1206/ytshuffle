@@ -83,12 +83,6 @@ async function applyLogin(token) {
     }
 }
 
-export function clearStoredAuth() {
-    localStorage.removeItem('yt_access_token');
-    localStorage.removeItem('yt_token_expires');
-    appState.accessToken = null;
-}
-
 export function handleLoginClick() {
     appState.tokenClient.requestAccessToken();
 }
