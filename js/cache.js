@@ -20,8 +20,9 @@ function openDB() {
 }
 
 export async function getCachedVideos(playlistId) {
+    let db = null;
     try {
-        const db = await openDB();
+        db = await openDB();
         return new Promise((resolve) => {
             const transaction = db.transaction([STORE_NAME], 'readonly');
             const store = transaction.objectStore(STORE_NAME);
@@ -47,13 +48,15 @@ export async function getCachedVideos(playlistId) {
             };
         });
     } catch {
+        if (db) db.close();
         return null;
     }
 }
 
 export async function setCachedVideos(playlistId, videos) {
+    let db = null;
     try {
-        const db = await openDB();
+        db = await openDB();
         return new Promise((resolve) => {
             const transaction = db.transaction([STORE_NAME], 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
@@ -76,14 +79,16 @@ export async function setCachedVideos(playlistId, videos) {
             };
         });
     } catch (error) {
+        if (db) db.close();
         console.error("IndexedDB Cache Write Error:", error);
         return false;
     }
 }
 
 export async function deleteCachedVideos(playlistId) {
+    let db = null;
     try {
-        const db = await openDB();
+        db = await openDB();
         return new Promise((resolve) => {
             const transaction = db.transaction([STORE_NAME], 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
@@ -100,6 +105,7 @@ export async function deleteCachedVideos(playlistId) {
             };
         });
     } catch {
+        if (db) db.close();
         return false;
     }
 }
