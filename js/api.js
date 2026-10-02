@@ -80,7 +80,7 @@ export async function fetchEntirePlaylist(playlistId) {
 
             document.getElementById('status-msg').innerText = `Pre-loading Videos... (${collectedVideos.length})`;
 
-            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${playlistId}&fields=items/contentDetails/videoId,nextPageToken${pageToken ? '&pageToken=' + pageToken : ''}`;
+            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=50&playlistId=${playlistId}&fields=items/contentDetails/videoId,nextPageToken${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
             
             const response = await fetch(url, { 
                 headers: { 'Authorization': `Bearer ${appState.accessToken}` },
