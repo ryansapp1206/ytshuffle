@@ -1,5 +1,6 @@
 import { appState, CLIENT_ID } from './state.js';
 import { fetchPlaylists, abortActiveFetches } from './api.js';
+import { renderDropdown } from './ui.js';
 
 export function setupAuth() {
     appState.tokenClient = google.accounts.oauth2.initTokenClient({
@@ -67,14 +68,19 @@ export function handleLogoutClick() {
     document.getElementById('status-msg').innerText = "Signed out successfully.";
 }
 
-function applyLogin(token) {
+async function applyLogin(token) {
     appState.accessToken = token;
     document.getElementById('login-btn').style.display = 'none';
     document.getElementById('playlist-container').style.display = 'block';
+    document.getElementById('logout-btn').style.display = 'block';
 
     document.getElementById('logout-btn').style.display = 'block';
 
-    fetchPlaylists();
+    await fetchPlaylists();
+    
+    if (appState.allPlaylistsData.length > 0) {
+        renderDropdown();
+    }
 }
 
 export function clearStoredAuth() {

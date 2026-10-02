@@ -1,5 +1,4 @@
 import { appState } from './state.js';
-import { renderDropdown } from './ui.js';
 import { getCachedVideos, setCachedVideos } from './cache.js';
 import { clearStoredAuth } from './auth.js';
 
@@ -31,7 +30,6 @@ export async function fetchPlaylists() {
         } while (pageToken);
 
         document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
-        renderDropdown(); 
 
     } catch (error) {
         if (error.message === "Token Expired") {
@@ -39,10 +37,6 @@ export async function fetchPlaylists() {
         } else {
             console.error("fetchPlaylists error:", error);
             document.getElementById('status-msg').innerText = "Network error. Partial playlists loaded.";
-            
-            if (appState.allPlaylistsData.length > 0) {
-                renderDropdown();
-            }
             
             const mainBtn = document.getElementById('shuffle-main-btn');
             if (mainBtn) mainBtn.disabled = false;
