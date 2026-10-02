@@ -1,9 +1,16 @@
 import { appState } from './state.js';
 import { fetchEntirePlaylist } from './api.js';
 
+function getStorageKey() {
+    const channelId = appState.allPlaylistsData.length > 0 
+        ? appState.allPlaylistsData[0].snippet.channelId 
+        : 'default_account';
+    return `yt_favorites_${channelId}`;
+}
+
 function getFavorites() {
     try {
-        const stored = localStorage.getItem('yt_favorites');
+        const stored = localStorage.getItem(getStorageKey());
         const parsed = stored ? JSON.parse(stored) : [];
         return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
@@ -55,7 +62,7 @@ export function renderDropdown(filterText = '') {
                 }
                 
                 try {
-                    localStorage.setItem('yt_favorites', JSON.stringify(currentFavs));
+                    localStorage.setItem(getStorageKey(), JSON.stringify(currentFavs));
                 } catch (error) {
                     console.warn("Storage access blocked. Unable to save favorite.", error);
                 }
@@ -210,7 +217,7 @@ export function setupUIEventListeners() {
 
 export function cleanGhostFavorites() {
     try {
-        const stored = localStorage.getItem('yt_favorites');
+        const stored = localStorage.getItem(getStorageKey());
         if (!stored) return;
         
         let favorites = JSON.parse(stored);
@@ -221,7 +228,7 @@ export function cleanGhostFavorites() {
         const cleanedFavorites = favorites.filter(id => validPlaylistIds.has(id));
         
         if (favorites.length !== cleanedFavorites.length) {
-            localStorage.setItem('yt_favorites', JSON.stringify(cleanedFavorites));
+            localStorage.setItem(getStorageKey(), JSON.stringify(cleanedFavorites));
             console.log(`Cleaned ${favorites.length - cleanedFavorites.length} ghost IDs.`);
         }
     } catch (e) {
