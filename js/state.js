@@ -8,3 +8,9 @@ export const appState = {
     selectedPlaylistId: "",
     currentBatchIndex: 0
 };
+
+export function clearStoredAuth() {
+    localStorage.removeItem('yt_access_token');
+    localStorage.removeItem('yt_token_expires');
+    appState.accessToken = null;
+}

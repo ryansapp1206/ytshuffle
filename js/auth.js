@@ -1,4 +1,4 @@
-import { appState, CLIENT_ID } from './state.js';
+import { appState, CLIENT_ID, clearStoredAuth } from './state.js';
 import { fetchPlaylists, abortActiveFetches } from './api.js';
 import { renderDropdown } from './ui.js';
 

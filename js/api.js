@@ -1,6 +1,5 @@
-import { appState } from './state.js';
+import { appState, clearStoredAuth } from './state.js';
 import { getCachedVideos, setCachedVideos } from './cache.js';
-import { clearStoredAuth } from './auth.js';
 
 let activeAbortController = null;
 
