@@ -125,6 +125,8 @@ export function setupUIEventListeners() {
                     fetchEntirePlaylist(appState.selectedPlaylistId);
                 }
             } else {
+                const dropdownList = document.getElementById('dropdown-list');
+                if (dropdownList) dropdownList.style.display = 'block';
                 abortActiveFetches();
                 
                 appState.selectedPlaylistId = ""; 
