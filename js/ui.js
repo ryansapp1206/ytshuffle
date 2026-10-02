@@ -2,10 +2,7 @@ import { appState } from './state.js';
 import { fetchEntirePlaylist } from './api.js';
 
 function getStorageKey() {
-    const channelId = appState.allPlaylistsData.length > 0 
-        ? appState.allPlaylistsData[0].snippet.channelId 
-        : 'default_account';
-    return `yt_favorites_${channelId}`;
+    return 'yt_shuffle_favorites';
 }
 
 function getFavorites() {
@@ -235,26 +232,5 @@ export function setupUIEventListeners() {
                 dropdownList.style.display = 'block';
             }
         });
-    }
-}
-
-export function cleanGhostFavorites() {
-    try {
-        const stored = localStorage.getItem(getStorageKey());
-        if (!stored) return;
-        
-        let favorites = JSON.parse(stored);
-        if (!Array.isArray(favorites)) return;
-
-        const validPlaylistIds = new Set(appState.allPlaylistsData.map(p => p.id));
-        
-        const cleanedFavorites = favorites.filter(id => validPlaylistIds.has(id));
-        
-        if (favorites.length !== cleanedFavorites.length) {
-            localStorage.setItem(getStorageKey(), JSON.stringify(cleanedFavorites));
-            console.log(`Cleaned ${favorites.length - cleanedFavorites.length} ghost IDs.`);
-        }
-    } catch (e) {
-        console.error("Failed to clean favorites:", e);
     }
 }

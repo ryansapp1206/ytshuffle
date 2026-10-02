@@ -2,7 +2,6 @@ import { appState } from './state.js';
 import { renderDropdown } from './ui.js';
 import { getCachedVideos, setCachedVideos } from './cache.js';
 import { clearStoredAuth } from './auth.js';
-import { cleanGhostFavorites } from './ui.js';
 
 let activeAbortController = null;
 
@@ -32,7 +31,6 @@ export async function fetchPlaylists() {
         } while (pageToken);
 
         document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
-        cleanGhostFavorites();
         renderDropdown(); 
 
     } catch (error) {
