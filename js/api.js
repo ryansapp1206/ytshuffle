@@ -4,6 +4,12 @@ import { getCachedVideos, setCachedVideos } from './cache.js';
 let activeAbortController = null;
 
 export async function fetchPlaylists() {
+    if (activeAbortController) {
+        activeAbortController.abort();
+    }
+    activeAbortController = new AbortController();
+    const { signal } = activeAbortController;
+
     appState.allPlaylistsData = []; 
     let pageToken = '';
     
@@ -13,7 +19,7 @@ export async function fetchPlaylists() {
         do {
             const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
             
-            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` } });
+            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${appState.accessToken}` },signal});
             
             if (response.status === 401) throw new Error("Token Expired");
             if (!response.ok) throw new Error("API Error");
@@ -31,6 +37,9 @@ export async function fetchPlaylists() {
         document.getElementById('status-msg').innerText = `Loaded ${appState.allPlaylistsData.length} Playlists.`;
 
     } catch (error) {
+        if (error.name === 'AbortError') {
+            return;
+        }
         if (error.message === "Token Expired") {
             handleAuthError();
         } else {
