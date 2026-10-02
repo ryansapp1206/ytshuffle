@@ -11,7 +11,15 @@ export function launchBatch() {
     const batch = appState.allVideoIds.slice(appState.currentBatchIndex, appState.currentBatchIndex + 50);
     if (batch.length === 0) return alert("No more videos in this playlist.");
 
-    window.open(`https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`, '_blank');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        const firstVideo = batch[0];
+        const remainingVideos = batch.slice(1).join(',');
+        window.open(`https://www.youtube.com/embed/${firstVideo}?playlist=${remainingVideos}&autoplay=1`, '_blank');
+    } else {
+        window.open(`https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`, '_blank');
+    }
     
     appState.currentBatchIndex += 50;
     const nextBtn = document.getElementById('next-batch-btn');
