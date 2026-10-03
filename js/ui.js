@@ -158,9 +158,12 @@ export function setupUIEventListeners() {
     const modal = document.getElementById('info-modal');
     const openBtn = document.getElementById('open-modal');
     const closeBtn = document.getElementById('close-modal');
-
+    
     if (openBtn && modal && closeBtn) {
-        openBtn.onclick = () => modal.classList.add('active');
+        openBtn.onclick = () => {
+            modal.classList.add('active');
+            alignModalToAppContainer(modal);
+        };
         closeBtn.onclick = () => modal.classList.remove('active');
         modal.onclick = (e) => {
             if (e.target === modal) modal.classList.remove('active');
@@ -177,6 +180,7 @@ export function setupUIEventListeners() {
         openContactBtn.onclick = (e) => {
             e.preventDefault();
             contactModal.classList.add('active');
+            alignModalToAppContainer(contactModal);
         };
         closeContactBtn.onclick = () => contactModal.classList.remove('active');
         contactModal.onclick = (e) => {
@@ -189,11 +193,36 @@ export function setupUIEventListeners() {
     const closeSettingsBtn = document.getElementById('close-settings-modal');
 
     if (openSettingsBtn && settingsModal && closeSettingsBtn) {
-        openSettingsBtn.onclick = () => settingsModal.classList.add('active');
+        openSettingsBtn.onclick = () => {
+            settingsModal.classList.add('active');
+            alignModalToAppContainer(settingsModal);
+        };
         closeSettingsBtn.onclick = () => settingsModal.classList.remove('active');
         settingsModal.onclick = (e) => {
             if (e.target === settingsModal) settingsModal.classList.remove('active');
         };
+    }
+
+    const ttlSlider = document.getElementById('ttl-slider');
+    const ttlDisplay = document.getElementById('ttl-display');
+    if (ttlSlider && ttlDisplay) {
+        ttlSlider.addEventListener('input', (e) => {
+            const hours = parseInt(e.target.value, 10);
+            if (hours >= 24) {
+                const days = hours / 24;
+                ttlDisplay.innerText = days === 1 ? '1 Day' : `${days} Days`;
+            } else {
+                ttlDisplay.innerText = `${hours} Hours`;
+            }
+        });
+    }
+
+    const maxFavSlider = document.getElementById('max-fav-slider');
+    const maxFavDisplay = document.getElementById('max-fav-display');
+    if (maxFavSlider && maxFavDisplay) {
+        maxFavSlider.addEventListener('input', (e) => {
+            maxFavDisplay.innerText = e.target.value;
+        });
     }
 
     if (feedbackForm) {
@@ -245,4 +274,26 @@ export function setupUIEventListeners() {
             }
         });
     }
+
+    window.addEventListener('resize', () => {
+        const activeModal = document.querySelector('.modal-overlay.active');
+        if (activeModal) alignModalToAppContainer(activeModal);
+    });
+}
+
+function alignModalToAppContainer(modalOverlay) {
+    const appContainer = document.querySelector('.app-container');
+    const modalContent = modalOverlay.querySelector('.modal-content');
+
+    if (!appContainer || !modalContent) return;
+
+    const rect = appContainer.getBoundingClientRect();
+    const centerX = rect.left + (rect.width / 2);
+    const centerY = rect.top + (rect.height / 2);
+
+    modalContent.style.position = 'absolute';
+    modalContent.style.left = `${centerX}px`;
+    modalContent.style.top = `${centerY}px`;
+    modalContent.style.transform = 'translate(-50%, -50%)';
+    modalContent.style.margin = '0';
 }
