@@ -108,11 +108,8 @@ export function setupUIEventListeners() {
         search.oninput = (e) => { 
             const typedText = e.target.value.toLowerCase();
             const exactMatch = appState.allPlaylistsData.find(p => p.snippet.title.toLowerCase() === typedText);
-            const refreshBtn = document.getElementById('refresh-playlist-btn');
 
             if (exactMatch) {
-                if (refreshBtn) refreshBtn.style.display = 'block';
-
                 if (appState.selectedPlaylistId !== exactMatch.id) {
                     appState.selectedPlaylistId = exactMatch.id; 
                     document.getElementById('dropdown-list').style.display = 'none'; 
@@ -131,8 +128,6 @@ export function setupUIEventListeners() {
                     fetchEntirePlaylist(appState.selectedPlaylistId);
                 }
             } else {
-                if (refreshBtn) refreshBtn.style.display = 'none';
-
                 const dropdownList = document.getElementById('dropdown-list');
                 if (dropdownList) dropdownList.style.display = 'block';
                 abortActiveFetches();
@@ -158,26 +153,7 @@ export function setupUIEventListeners() {
 
             renderDropdown(typedText); 
         };
-
-        const refreshPlaylistBtn = document.getElementById('refresh-playlist-btn');
-        if (refreshPlaylistBtn) {
-        refreshPlaylistBtn.onclick = (e) => {
-            e.stopPropagation(); // Prevent the input box from stealing focus
-            if (!appState.selectedPlaylistId) return; // Safety check
-
-            const mainBtn = document.getElementById('shuffle-main-btn');
-            if (mainBtn) {
-                mainBtn.disabled = true;
-                mainBtn.innerText = "Forcing Refresh...";
-                mainBtn.className = "btn btn-primary";
-            }
-
-            appState.allVideoIds = []; 
-            // Pass true to trigger the bypass
-            fetchEntirePlaylist(appState.selectedPlaylistId, true); 
-        };
     }
-}
 
     const modal = document.getElementById('info-modal');
     const openBtn = document.getElementById('open-modal');
@@ -202,11 +178,21 @@ export function setupUIEventListeners() {
             e.preventDefault();
             contactModal.classList.add('active');
         };
-        
         closeContactBtn.onclick = () => contactModal.classList.remove('active');
-        
         contactModal.onclick = (e) => {
             if (e.target === contactModal) contactModal.classList.remove('active');
+        };
+    }
+
+    const settingsModal = document.getElementById('settings-modal');
+    const openSettingsBtn = document.getElementById('open-settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-modal');
+
+    if (openSettingsBtn && settingsModal && closeSettingsBtn) {
+        openSettingsBtn.onclick = () => settingsModal.classList.add('active');
+        closeSettingsBtn.onclick = () => settingsModal.classList.remove('active');
+        settingsModal.onclick = (e) => {
+            if (e.target === settingsModal) settingsModal.classList.remove('active');
         };
     }
 
@@ -222,7 +208,6 @@ export function setupUIEventListeners() {
                     body: new FormData(feedbackForm),
                     headers: { 'Accept': 'application/json' }
                 });
-                
                 if (response.ok) {
                     feedbackForm.reset();
                     submitFeedbackBtn.innerText = "Feedback Sent!";

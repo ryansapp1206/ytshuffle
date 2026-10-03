@@ -52,7 +52,7 @@ export async function fetchPlaylists() {
     }
 }
 
-export async function fetchEntirePlaylist(playlistId, forceRefresh = false) {
+export async function fetchEntirePlaylist(playlistId) {
     if (activeAbortController) {
         activeAbortController.abort();
     }
@@ -65,7 +65,7 @@ export async function fetchEntirePlaylist(playlistId, forceRefresh = false) {
     const cachedVideos = await getCachedVideos(playlistId);
     if (signal.aborted || playlistId !== appState.selectedPlaylistId) return;
 
-    if (!forceRefresh && cachedVideos && cachedVideos.length > 0) {
+    if (cachedVideos && cachedVideos.length > 0) {
         appState.allVideoIds = cachedVideos;
         setReadyUI(cachedVideos.length);
         return;
