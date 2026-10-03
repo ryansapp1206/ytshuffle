@@ -1,5 +1,6 @@
 import { appState } from './state.js';
-import { fetchEntirePlaylist, abortActiveFetches } from './api.js';
+import { fetchEntirePlaylist, fetchPlaylists, abortActiveFetches } from './api.js';
+import { clearAllCachedVideos } from './cache.js';
 
 function getStorageKey() {
     return 'yt_shuffle_favorites';
@@ -73,9 +74,6 @@ export function renderDropdown(filterText = '') {
                 document.getElementById('playlist-search').value = p.snippet.title; 
                 appState.selectedPlaylistId = p.id; 
                 list.style.display = 'none'; 
-
-                const refreshBtn = document.getElementById('refresh-playlist-btn');
-                if (refreshBtn) refreshBtn.style.display = 'block';
                 
                 const nextBtn = document.getElementById('next-batch-btn');
                 if (nextBtn) nextBtn.style.display = 'none';
@@ -115,6 +113,56 @@ export function setupUIEventListeners() {
                 localStorage.setItem('yt_theme', 'light');
                 themeBtn.innerText = 'Toggle Dark Mode';
             }
+        };
+    }
+
+    const refreshBtn = document.getElementById('refresh-playlist-btn');
+    if (refreshBtn) {
+        const lastSync = parseInt(localStorage.getItem('yt_last_sync_time') || '0', 10);
+        if (Date.now() - lastSync < (5 * 60 * 1000)) {
+            startRefreshCooldown(refreshBtn);
+        }
+
+        refreshBtn.onclick = async () => {
+            const currentLastSync = parseInt(localStorage.getItem('yt_last_sync_time') || '0', 10);
+            if (Date.now() - currentLastSync < (5 * 60 * 1000)) return;
+
+            localStorage.setItem('yt_last_sync_time', Date.now().toString());
+            startRefreshCooldown(refreshBtn);
+
+            const settingsModal = document.getElementById('settings-modal');
+            if (settingsModal) settingsModal.classList.remove('active');
+
+            abortActiveFetches();
+
+            const statusMsg = document.getElementById('status-msg');
+            if (statusMsg) statusMsg.innerText = "Wiping cache and re-syncing playlists...";
+            
+            const mainBtn = document.getElementById('shuffle-main-btn');
+            if (mainBtn) {
+                mainBtn.disabled = true;
+                mainBtn.innerHTML = `<svg class="g-icon" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg> Shuffle & Play`;
+                mainBtn.className = "btn btn-primary";
+            }
+            
+            const nextBtn = document.getElementById('next-batch-btn');
+            if (nextBtn) nextBtn.style.display = 'none';
+
+            await clearAllCachedVideos();
+
+            appState.allPlaylistsData = [];
+            appState.allVideoIds = [];
+            appState.selectedPlaylistId = "";
+            appState.currentBatchIndex = 0;
+
+            const searchInput = document.getElementById('playlist-search');
+            if (searchInput) searchInput.value = "";
+            
+            const dropdownList = document.getElementById('dropdown-list');
+            if (dropdownList) dropdownList.style.display = 'none';
+
+            await fetchPlaylists();
+            renderDropdown();
         };
     }
 
@@ -316,4 +364,34 @@ function alignModalToAppContainer(modalOverlay) {
     modalContent.style.top = `${centerY}px`;
     modalContent.style.transform = 'translate(-50%, -50%)';
     modalContent.style.margin = '0';
+}
+
+function startRefreshCooldown(btn) {
+    if (btn.cooldownInterval) clearInterval(btn.cooldownInterval);
+    
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+
+    const updateTimer = () => {
+        const now = Date.now();
+        const lastSync = parseInt(localStorage.getItem('yt_last_sync_time') || '0', 10);
+        const timePassed = now - lastSync;
+        const timeLeft = Math.max(0, (5 * 60 * 1000) - timePassed);
+
+        if (timeLeft <= 0) {
+            clearInterval(btn.cooldownInterval);
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.innerText = 'Clear & Resync Cache';
+        } else {
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            btn.innerText = `Available in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    };
+
+    updateTimer(); 
+    btn.cooldownInterval = setInterval(updateTimer, 1000);
 }

@@ -109,3 +109,28 @@ export async function deleteCachedVideos(playlistId) {
         return false;
     }
 }
+
+export async function clearAllCachedVideos() {
+    let db = null;
+    try {
+        db = await openDB();
+        return new Promise((resolve) => {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.clear();
+            
+            request.onsuccess = () => {
+                db.close();
+                resolve(true);
+            };
+            
+            request.onerror = () => {
+                db.close(); 
+                resolve(false);
+            };
+        });
+    } catch {
+        if (db) db.close();
+        return false;
+    }
+}
