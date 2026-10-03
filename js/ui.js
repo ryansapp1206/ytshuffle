@@ -98,6 +98,26 @@ export function renderDropdown(filterText = '') {
 }
 
 export function setupUIEventListeners() {
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        themeBtn.innerText = currentTheme === 'light' ? 'Toggle Dark Mode' : 'Toggle Light Mode';
+
+        themeBtn.onclick = () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('yt_theme', 'dark');
+                themeBtn.innerText = 'Toggle Light Mode';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('yt_theme', 'light');
+                themeBtn.innerText = 'Toggle Dark Mode';
+            }
+        };
+    }
+
     const search = document.getElementById('playlist-search');
     if (search) {
         search.onfocus = () => { 
@@ -158,7 +178,7 @@ export function setupUIEventListeners() {
     const modal = document.getElementById('info-modal');
     const openBtn = document.getElementById('open-modal');
     const closeBtn = document.getElementById('close-modal');
-    
+
     if (openBtn && modal && closeBtn) {
         openBtn.onclick = () => {
             modal.classList.add('active');

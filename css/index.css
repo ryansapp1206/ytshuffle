@@ -10,6 +10,21 @@
     --yt-subtext: #aaaaaa; 
     --yt-border: #333333;
     --yt-accent: #f1f1f1; 
+    --yt-input-bg: #121212;
+    --yt-hover-bg: #3e3e3e;
+    --yt-dot-color: #222;
+}
+
+[data-theme="light"] {
+    --yt-dark-bg: #eef0f2;
+    --yt-card-bg: #ffffff; 
+    --yt-text: #0f0f0f; 
+    --yt-subtext: #606060; 
+    --yt-border: #cccccc;
+    --yt-accent: #121212;
+    --yt-input-bg: #f1f1f1;
+    --yt-hover-bg: #eaeaeb;
+    --yt-dot-color: #e0e0e0;
 }
 
 body { 
@@ -22,7 +37,7 @@ body {
     min-height: 100dvh; 
     margin: 0;
     overflow-x: hidden; 
-    background-image: radial-gradient(circle at 2px 2px, #222 1px, transparent 0);
+    background-image: radial-gradient(circle at 2px 2px, var(--yt-dot-color) 1px, transparent 0);
     background-size: 40px 40px;
 }
 
@@ -80,14 +95,14 @@ h1 {
 }
 
 #status-msg { 
-    background: #121212;
+    background: var(--yt-input-bg);
+    border: 1px solid var(--yt-border);
     padding: 12px;
     border-radius: 12px;
     color: var(--yt-accent); 
     font-size: 14px; 
     margin-bottom: 20px;
     font-family: 'Roboto Mono', monospace;
-    border: 1px solid #222;
 }
 
 .btn { 
@@ -162,8 +177,8 @@ h1 {
 #playlist-search { 
     width: 100%; 
     padding: 14px 18px; 
-    background-color: #121212; 
-    color: white; 
+    background-color: var(--yt-input-bg); 
+    color: var(--yt-text);
     border: 1px solid var(--yt-border); 
     border-radius: 12px; 
     box-sizing: border-box; 
@@ -184,7 +199,7 @@ h1 {
     position: absolute; 
     top: 100%; left: 0; 
     right: 0; 
-    background-color: #282828; 
+    background-color: var(--yt-card-bg);
     border: 1px solid var(--yt-border); 
     border-radius: 12px; 
     max-height: 200px; 
@@ -203,7 +218,7 @@ h1 {
 }
 
 #dropdown-list li:hover { 
-    background-color: #3e3e3e; 
+    background-color: var(--yt-hover-bg);
 }
 
 .g-icon { 
