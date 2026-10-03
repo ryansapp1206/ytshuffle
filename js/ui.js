@@ -53,9 +53,15 @@ export function renderDropdown(filterText = '') {
                 e.stopPropagation();
                 
                 let currentFavs = getFavorites();
+                
                 if (currentFavs.includes(p.id)) {
                     currentFavs = currentFavs.filter(id => id !== p.id);
                 } else {
+                    const maxAllowed = parseInt(localStorage.getItem('yt_max_favs') || '3', 10);
+                    if (currentFavs.length >= maxAllowed) {
+                        alert(`You can only favorite up to ${maxAllowed} playlists. Adjust this limit in Settings.`);
+                        return;
+                    }
                     currentFavs.push(p.id);
                 }
                 
@@ -258,21 +264,56 @@ export function setupUIEventListeners() {
 
     const settingsModal = document.getElementById('settings-modal');
     const openSettingsBtn = document.getElementById('open-settings-modal');
-    const closeSettingsBtn = document.getElementById('close-settings-modal');
+    const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    const ttlSlider = document.getElementById('ttl-slider');
+    const ttlDisplay = document.getElementById('ttl-display');
+    const maxFavSlider = document.getElementById('max-fav-slider');
+    const maxFavDisplay = document.getElementById('max-fav-display');
 
-    if (openSettingsBtn && settingsModal && closeSettingsBtn) {
+    function loadSettingsUI() {
+        if (ttlSlider && ttlDisplay) {
+            const savedTTL = localStorage.getItem('yt_cache_ttl') || '12';
+            ttlSlider.value = savedTTL;
+            const hours = parseInt(savedTTL, 10);
+            if (hours >= 24) {
+                const days = hours / 24;
+                ttlDisplay.innerText = days === 1 ? '1 Day' : `${days} Days`;
+            } else {
+                ttlDisplay.innerText = `${hours} Hours`;
+            }
+        }
+        
+        if (maxFavSlider && maxFavDisplay) {
+            const savedFavs = localStorage.getItem('yt_max_favs') || '3';
+            maxFavSlider.value = savedFavs;
+            maxFavDisplay.innerText = savedFavs;
+        }
+    }
+
+    if (openSettingsBtn && settingsModal) {
         openSettingsBtn.onclick = () => {
+            loadSettingsUI();
             settingsModal.classList.add('active');
             alignModalToAppContainer(settingsModal);
         };
-        closeSettingsBtn.onclick = () => settingsModal.classList.remove('active');
+
+        const closeModal = () => settingsModal.classList.remove('active');
+        if (cancelSettingsBtn) cancelSettingsBtn.onclick = closeModal;
+        
         settingsModal.onclick = (e) => {
-            if (e.target === settingsModal) settingsModal.classList.remove('active');
+            if (e.target === settingsModal) closeModal();
         };
+
+        if (saveSettingsBtn) {
+            saveSettingsBtn.onclick = () => {
+                if (ttlSlider) localStorage.setItem('yt_cache_ttl', ttlSlider.value);
+                if (maxFavSlider) localStorage.setItem('yt_max_favs', maxFavSlider.value);
+                closeModal();
+            };
+        }
     }
 
-    const ttlSlider = document.getElementById('ttl-slider');
-    const ttlDisplay = document.getElementById('ttl-display');
     if (ttlSlider && ttlDisplay) {
         ttlSlider.addEventListener('input', (e) => {
             const hours = parseInt(e.target.value, 10);
@@ -285,8 +326,6 @@ export function setupUIEventListeners() {
         });
     }
 
-    const maxFavSlider = document.getElementById('max-fav-slider');
-    const maxFavDisplay = document.getElementById('max-fav-display');
     if (maxFavSlider && maxFavDisplay) {
         maxFavSlider.addEventListener('input', (e) => {
             maxFavDisplay.innerText = e.target.value;

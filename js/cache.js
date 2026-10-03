@@ -1,7 +1,11 @@
 const DB_NAME = 'yt_shuffle_db';
 const DB_VERSION = 1;
 const STORE_NAME = 'playlist_cache';
-const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
+
+function getCacheTTL() {
+    const hours = parseInt(localStorage.getItem('yt_cache_ttl') || '12', 10);
+    return hours * 60 * 60 * 1000;
+}
 
 function openDB() {
     return new Promise((resolve, reject) => {
@@ -34,7 +38,7 @@ export async function getCachedVideos(playlistId) {
 
                 if (!entry) return resolve(null);
 
-                if (Date.now() - entry.timestamp < CACHE_TTL_MS) {
+                if (Date.now() - entry.timestamp < getCacheTTL()) {
                     resolve(entry.videos);
                 } else {
                     deleteCachedVideos(playlistId); 
