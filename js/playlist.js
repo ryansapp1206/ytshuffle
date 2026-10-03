@@ -11,7 +11,14 @@ export function launchBatch() {
     const batch = appState.allVideoIds.slice(appState.currentBatchIndex, appState.currentBatchIndex + 50);
     if (batch.length === 0) return alert("No more videos in this playlist.");
 
-    window.open(`https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`, '_blank');
+    const ytUrl = `https://www.youtube.com/watch_videos?video_ids=${batch.join(',')}`;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        window.location.href = ytUrl;
+    } else {
+        window.open(ytUrl, '_blank');
+    }
     
     appState.currentBatchIndex += 50;
     const nextBtn = document.getElementById('next-batch-btn');
@@ -27,7 +34,7 @@ export function launchBatch() {
         nextBtn.className = "btn btn-primary";
         shuffleBtn.className = "btn btn-secondary";
     } else {
-        nextBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
         document.getElementById('status-msg').innerText = "Playlist Finished!";
     }
 }

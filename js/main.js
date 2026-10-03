@@ -1,5 +1,5 @@
 import { setupAuth, handleLoginClick, handleLogoutClick } from './auth.js';
-import { handleShuffleMainClick, launchBatch } from './playlist.js';
+import { handleShuffleMainClick, launchBatch } from './playlist.js?v=4';
 import { setupUIEventListeners } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
