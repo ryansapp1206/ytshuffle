@@ -159,6 +159,12 @@ function setEmptyUI() {
 
 function handleAuthError() {
     clearStoredAuth();
+    
+    appState.allPlaylistsData = [];
+    appState.allVideoIds = [];
+    appState.selectedPlaylistId = "";
+    appState.currentBatchIndex = 0;
+
     document.getElementById('status-msg').innerText = "Session expired. Please sign in again.";
     document.getElementById('playlist-container').style.display = 'none';
     
