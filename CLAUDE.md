@@ -7,6 +7,11 @@ Static, client-side web app that shuffles YouTube playlists. YouTube's own shuff
 - A minimalist redesign is planned for after verification. It is not part of the current app. Do not implement it unless asked.
 - OAuth scope is read-only `youtube.readonly`. Implicit token flow via Google Identity Services, no client secret.
 
+## Git workflow
+- ALWAYS show the user the proposed commit message(s) and the files each commit will include BEFORE committing or pushing, and wait for approval. Approval of one message does not cover later commits.
+- Make one logical change per commit so any commit can be reverted cleanly with `git revert`.
+- Push only when the user asks or has approved the commit(s) for pushing.
+
 ## File layout
 | File | Role |
 |---|---|
